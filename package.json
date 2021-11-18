@@ -1,0 +1,27 @@
+{
+  "name": "web3js",
+  "version": "1.0.0",
+  "description": "A simple web3js API",
+  "main": "app.js",
+  "scripts": {
+    "build": "rm -rf ./js/ && tsc",
+    "start": "node build/src/app.js",
+    "doc": "npx typedoc"
+  },
+  "author": "Masood Zafar",
+  "license": "MIT",
+  "dependencies": {
+    "@hapi/hapi": "^20.2.1",
+    "@types/node": "^16.11.7",
+    "joi": "^17.4.2",
+    "pg": "^8.7.1",
+    "pgtools": "^0.3.2",
+    "sequelize": "^6.9.0",
+    "typedoc": "^0.22.8",
+    "web3": "^1.6.0",
+    "web3-utils": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/validator": "^13.6.6"
+  }
+}
