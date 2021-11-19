@@ -1,11 +1,10 @@
 'use strict';
 
-import {depositListener, withdrawListener} from "../listeners/listener";
-
 let Web3 = require('web3');
 import {abi} from "../contracts/abi";
 import {abiERC20} from "../contracts/abiERC20";
 import {METHODS} from "../contracts/methodsOfContracts";
+import {checkUserByAddress, checkWalletByAddress, createUser, createWallet} from "./database";
 
 /**
  * An api key from the 'Infura' network for Testnet.
@@ -20,7 +19,7 @@ const url2 = 'https://mainnet.infura.io/v3/02944e93a8fc48cb8796c7fa43e0e29f'
 /**
  * The private key from of your account on metamask.
  */
-const privateKey = '';
+const privateKey = '5e1b1670385b97db3af50432729bce55d071e28599b37a279bc019d92fa7fc02';
 
 /**
  * Initializing our web3 objects for contacting with Ethereum block chain.
@@ -48,7 +47,6 @@ const address = '0x9F637286498b52f63e7C43BB758214C52F2D6E1b';
 export async function depositFundsContract(tokenAddress: String, amount: Number, userAddress: String): Promise<string> {
 
     const contract = new web3Test.eth.Contract(abi,address);
-    let message: string | undefined;
     try {
         const gasPrice = await web3Test.eth.getGasPrice();
         const gas = await contract.methods.deposit(amount.toString(),tokenAddress).estimateGas({ from: userAddress });
@@ -57,17 +55,11 @@ export async function depositFundsContract(tokenAddress: String, amount: Number,
             gasPrice: gasPrice,
             gas: gas
         });
-        const ans: boolean = await depositListener(tokenAddress,amount,userAddress);
-        if(ans) {
-            message = 'Amount deposit successfully.';
-        } else {
-            message = 'Failed to deposit amount.';
-        }
+        return 'Funds Deposited.';
     } catch (error) {
-        message = 'Error!'
         console.log(error);
+        return 'Error. Could not deposit funds.';
     }
-    return message;
 }
 
 /**
@@ -78,7 +70,6 @@ export async function depositFundsContract(tokenAddress: String, amount: Number,
 export async function withdrawFundsContract(tokenAddress: String, amount: Number, userAddress: String): Promise<string> {
 
     const contract = new web3Test.eth.Contract(abi,address);
-    let message: string | undefined;
     try {
         const gasPrice = await web3Test.eth.getGasPrice();
         const gas = await contract.methods.withdraw(amount.toString(),tokenAddress).estimateGas({ from: userAddress });
@@ -87,17 +78,11 @@ export async function withdrawFundsContract(tokenAddress: String, amount: Number
             gasPrice: gasPrice,
             gas: gas
         });
-        const ans: boolean = await withdrawListener(tokenAddress,amount,userAddress);
-        if(ans) {
-            message = 'Amount withdrawn successfully.';
-        } else {
-            message = 'Failed to withdraw amount.'
-        }
+        return 'Funds withdrawn.';
     } catch (error) {
-        message = 'Error!';
         console.log(error);
+        return 'Error. Could not withdraw funds.';
     }
-    return message;
 }
 
 /**
@@ -160,6 +145,35 @@ export async function returnTokenBalance(tokenAddress: String): Promise<string> 
     }));
 
     return web3Main.utils.fromWei(balance,'ether');
+}
+
+/**
+ * An async function that checks the database if user and wallet exists.
+ * @function checkDatabase
+ * @returns {boolean}
+ */
+export async function checkDatabase(tokenAddress: String, userAddress: String): Promise<boolean> {
+
+    /**
+     * Checks if the Ethereum address is valid. Then performs a query and checks if user and wallet exists.
+     * If the responses are empty a new user and a new wallet are created.
+     */
+    if(web3Main.utils.isAddress(tokenAddress)) {
+
+        const res1: String = await checkUserByAddress(userAddress);
+        if(res1.length === 0) {
+            await createUser(userAddress);
+        }
+
+        const res2: String = await checkWalletByAddress(tokenAddress, userAddress);
+        if(res2.length === 0) {
+            await createWallet(tokenAddress,0,userAddress);
+        }
+        return true;
+
+    } else {
+        return false;
+    }
 }
 
 /**

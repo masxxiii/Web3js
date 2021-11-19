@@ -1,4 +1,6 @@
 'use strict';
+import {eventListener} from "./listeners/listener";
+
 const Hapi = require('@hapi/hapi');
 const routes = require('../src/routes/routes');
 import { createDatabase } from "./config/database";
@@ -26,6 +28,9 @@ const startServer = async () => {
     // await createDatabase();
     // await createTables();
     await connectSequelize();
+
+    //connecting our listeners
+    await eventListener();
 };
 
 /**
