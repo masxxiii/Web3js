@@ -14,7 +14,8 @@ import  { connectSequelize, disconnectSequelize } from "./config/sequelize";
 const startServer = async () => {
 
     const server = Hapi.server({
-
+        port: 3000,
+        host: 'localhost'
     });
 
     await server.start();
