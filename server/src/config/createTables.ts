@@ -2,7 +2,7 @@
 import { User } from "../models/users";
 import { Wallet } from "../models/wallets";
 import { Transaction } from "../models/transactions";
-
+import { DataTypes } from "sequelize";
 
 /**
  * Async function that assigns a relationship to User model and creates a table 'Users' in the database.
