@@ -47,5 +47,5 @@ process.on('unhandledRejection', (err) => {
  * Starting the server.
  */
 startServer().then(() => {
-    console.log('Server Started.');
+    console.log('Server Started');
 });
